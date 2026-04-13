@@ -1,75 +1,83 @@
 import telebot
 from telebot import types
 import requests
+import re
 import time
 
-# --- البيانات الخاصة بك ---
+# --- البيانات الأساسية ---
 BOT_TOKEN = '8789390021:AAH2FySSy3mOhfPWOxFMLr7aBz2BF14dvyM'
-API_KEY = 'EyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE4MDc2NDAzOTksImlhdCI6MTc3NjEwNDM5OSwicmF5IjoiZDljMTY5ZjI5MDJmNjI1ZTEzNjJkZDM5YWEyODhhNjIiLCJzdWIiOjM5Njg4NTF9.u8-OIop-4JsmvUY0WzInW2NV_2oTRXC4xx-nWzGK-tdQQA_GQLf5kJ7oI3bEQDnj9VT8tw74sFVc9l-bQxbZrzopJebgCAh5CAPh4acaQJ0Ksw1iTYAVp6FEWTp5Yq2M3zAz7OnTykTp0cJUOu6T2xEn6tjg36pn60pg5so2CxixInDV1-rVAtNY7v2qwiNWyd92MXJFyEhoJrDblsR9kKeFxeR4_QYVknByGrh2ZJ3RfT3k35Y_NLr_t8aqOcfD99fZqMYIy0AvR0ePfDQY3xXE-5n2rsoCtMKyy5MfwGBxKlrtwvU4TVYrZ3E50pJeDGfDuo84uNb1JF3LjSypbg'
-ADMIN_ID = 8085880852
+ADMIN_ID = "8085880852" # ايدي حسابك لقطع المعاينة
 
 bot = telebot.TeleBot(BOT_TOKEN)
-headers = {
-    'Authorization': f'Bearer {API_KEY}',
-    'Accept': 'application/json',
-}
+
+# دالة إرسال آمنة لتعطيل المعاينة
+def safe_send(chat_id, text, markup=None):
+    return bot.send_message(
+        chat_id, 
+        text, 
+        reply_markup=markup, 
+        parse_mode='HTML', 
+        link_preview_options=types.LinkPreviewOptions(is_disabled=True)
+    )
 
 # --- واجهة البوت الرئيسية ---
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    if message.from_user.id == ADMIN_ID:
-        markup = types.InlineKeyboardMarkup(row_width=2)
-        
-        # أزرار الخدمات
-        btn1 = types.InlineKeyboardButton("🇺🇸 طلب رقم أمريكي", callback_data="buy_usa")
-        btn2 = types.InlineKeyboardButton("🎁 أرقام مجانية", url="https://receive-smss.com/")
-        btn3 = types.InlineKeyboardButton("💰 شحن الرصيد", callback_data="recharge")
-        btn4 = types.InlineKeyboardButton("🛠 الدعم الفني", url="https://t.me/your_username") # ضع يوزرك هنا
-        
-        markup.add(btn1, btn2, btn3, btn4)
-        
-        welcome_text = (
-            "<b>✨ أهلاً بك في بوت أرقام السبع المتطور ✨</b>\n\n"
-            "🛡 <b>حالة الحساب:</b> مفعّل (مطور)\n"
-            "🚀 <b>الخدمة:</b> جاهزة للاستخدام\n\n"
-            "<i>اختر من القائمة أدناه لبدء العمل:</i>"
-        )
-        bot.send_message(message.chat.id, welcome_text, reply_markup=markup, parse_mode='HTML')
-    else:
-        bot.reply_to(message, "❌ هذا البوت مخصص للمطور فقط.")
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    btn1 = types.InlineKeyboardButton("🎁 أرقام مجانية", callback_data="free_num")
+    btn2 = types.InlineKeyboardButton("👨‍💻 المطور السبع أبو نمر", url=f"tg://user?id={ADMIN_ID}")
+    markup.add(btn1, btn2)
+    
+    welcome_text = "<b>🦁 مرحباً بك في بوت أرقام السبع 🦁</b>\n\nاضغط على الزر أدناه لجلب رقم مجاني فوراً."
+    safe_send(message.chat.id, welcome_text, markup)
 
-# --- معالجة الضغط على الأزرار ---
+# --- معالجة جلب الرقم والكود ---
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
-    if call.data == "buy_usa":
-        bot.answer_callback_query(call.id, "جاري معالجة طلبك... ⏳")
-        bot.edit_message_text("🔄 <b>جاري سحب رقم جديد من 5Sim...</b>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
+    if call.data == "free_num":
+        bot.answer_callback_query(call.id, "جاري جلب البيانات...")
+        bot.edit_message_text("🔄 <b>جاري استخراج الرقم بواسطة السبع...</b>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
         
-        # طلب الرقم
-        url = "https://5sim.net/v1/user/buy/activation/usa/any/telegram"
         try:
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                data = response.json()
-                phone = data['phone']
-                order_id = data['id']
-                bot.send_message(call.message.chat.id, f"✅ <b>تم استلام الرقم بنجاح!</b>\n\nالرقم: <code>{phone}</code>\n\n<i>قم بإدخاله الآن وانتظر وصول الكود...</i>", parse_mode='HTML')
+            url = "https://free-sms-receive.com/united-states/"
+            res = requests.get(url, timeout=10)
+            numbers = re.findall(r'\+\d{11}', res.text)
+            
+            if numbers:
+                target_num = numbers[0]
+                num_only = target_num.replace('+', '')
+                
+                # الرسالة الأولى: بيانات الرقم
+                info_text = (
+                    "👑 <b>مرسال الرقم السبع أبو نمر</b>\n\n"
+                    f"📱 <b>الرقم:</b> <code>{target_num}</code>\n"
+                    "🌍 <b>الدولة:</b> الولايات المتحدة 🇺🇸\n"
+                    "⏳ <b>الكود:</b> جاري الانتظار...\n"
+                    "🛠 <b>المهنة:</b> تليجرام / واتساب / فيس"
+                )
+                safe_send(call.message.chat.id, info_text)
                 
                 # فحص الكود تلقائياً
-                for _ in range(15):
-                    time.sleep(10)
-                    check = requests.get(f"https://5sim.net/v1/user/check/{order_id}", headers=headers).json()
-                    if check.get('sms'):
-                        code = check['sms'][0]['code']
-                        bot.send_message(call.message.chat.id, f"📩 <b>كود التفعيل هو:</b>\n\n<code>{code}</code>", parse_mode='HTML')
+                for _ in range(10):
+                    time.sleep(15)
+                    msg_res = requests.get(f"https://free-sms-receive.com/number/{num_only}/", timeout=10)
+                    codes = re.findall(r'Telegram code: (\d{5})', msg_res.text)
+                    
+                    if codes:
+                        final_text = (
+                            "👑 <b>مرسال الرقم السبع أبو نمر</b>\n\n"
+                            f"📱 <b>الرقم:</b> <code>{target_num}</code>\n"
+                            "🌍 <b>الدولة:</b> الولايات المتحدة 🇺🇸\n"
+                            f"📩 <b>الكود:</b> <code>{codes[0]}</code>\n"
+                            "🛠 <b>المهنة:</b> تليجرام ✅"
+                        )
+                        safe_send(call.message.chat.id, final_text)
                         return
-                bot.send_message(call.message.chat.id, "⚠️ انتهى الوقت ولم يصل الكود.")
+                
+                safe_send(call.message.chat.id, "⚠️ انتهى الوقت ولم يصل كود جديد لهذا الرقم.")
             else:
-                bot.send_message(call.message.chat.id, "❌ <b>فشل الطلب:</b> تأكد من شحن رصيدك في 5Sim.")
+                safe_send(call.message.chat.id, "❌ لا توجد أرقام متاحة حالياً.")
         except:
-            bot.send_message(call.message.chat.id, "⚠️ حدث خطأ في الاتصال بالمزود.")
-
-    elif call.data == "recharge":
-        bot.send_message(call.message.chat.id, "💳 لشحن رصيدك، يرجى التواصل مع الإدارة أو استخدام بوابة الفيزا في موقع 5Sim مباشرة.")
+            safe_send(call.message.chat.id, "⚠️ حدث خطأ فني أثناء جلب الرقم.")
 
 bot.polling()
