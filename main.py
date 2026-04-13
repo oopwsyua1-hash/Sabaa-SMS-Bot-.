@@ -6,11 +6,10 @@ import time
 
 # --- البيانات الأساسية ---
 BOT_TOKEN = '8789390021:AAH2FySSy3mOhfPWOxFMLr7aBz2BF14dvyM'
-ADMIN_ID = "8085880852" # ايدي حسابك لقطع المعاينة
+ADMIN_ID = "8085880852" 
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# دالة إرسال آمنة لتعطيل المعاينة
 def safe_send(chat_id, text, markup=None):
     return bot.send_message(
         chat_id, 
@@ -35,10 +34,11 @@ def send_welcome(message):
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
     if call.data == "free_num":
-        bot.answer_callback_query(call.id, "جاري جلب البيانات...")
+        bot.answer_callback_query(call.id, "جاري البحث في السيرفرات...")
         bot.edit_message_text("🔄 <b>جاري استخراج الرقم بواسطة السبع...</b>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
         
         try:
+            # محاولة البحث عن أرقام في الموقع
             url = "https://free-sms-receive.com/united-states/"
             res = requests.get(url, timeout=10)
             numbers = re.findall(r'\+\d{11}', res.text)
@@ -47,25 +47,27 @@ def callback_query(call):
                 target_num = numbers[0]
                 num_only = target_num.replace('+', '')
                 
-                # الرسالة الأولى: بيانات الرقم
+                # رسالة المرسال المنسقة (قبل وصول الكود)
                 info_text = (
-                    "👑 <b>مرسال الرقم السبع أبو نمر</b>\n\n"
+                    "👑 <b>مرسال الرقم السبع أبو نمر</b>\n"
+                    "━━━━━━━━━━━━━━\n"
                     f"📱 <b>الرقم:</b> <code>{target_num}</code>\n"
                     "🌍 <b>الدولة:</b> الولايات المتحدة 🇺🇸\n"
                     "⏳ <b>الكود:</b> جاري الانتظار...\n"
-                    "🛠 <b>المهنة:</b> تليجرام / واتساب / فيس"
+                    "🛠 <b>المهنة:</b> واتساب - تليجرام - فيسبوك"
                 )
                 safe_send(call.message.chat.id, info_text)
                 
-                # فحص الكود تلقائياً
-                for _ in range(10):
+                # فحص الكود
+                for _ in range(12): # فحص لمدة 3 دقائق تقريباً
                     time.sleep(15)
-                    msg_res = requests.get(f"https://free-sms-receive.com/number/{num_only}/", timeout=10)
+                    msg_res = requests.get(f"https://free-sms-receive.get/number/{num_only}/", timeout=10)
                     codes = re.findall(r'Telegram code: (\d{5})', msg_res.text)
                     
                     if codes:
                         final_text = (
-                            "👑 <b>مرسال الرقم السبع أبو نمر</b>\n\n"
+                            "👑 <b>مرسال الرقم السبع أبو نمر</b>\n"
+                            "━━━━━━━━━━━━━━\n"
                             f"📱 <b>الرقم:</b> <code>{target_num}</code>\n"
                             "🌍 <b>الدولة:</b> الولايات المتحدة 🇺🇸\n"
                             f"📩 <b>الكود:</b> <code>{codes[0]}</code>\n"
@@ -74,10 +76,10 @@ def callback_query(call):
                         safe_send(call.message.chat.id, final_text)
                         return
                 
-                safe_send(call.message.chat.id, "⚠️ انتهى الوقت ولم يصل كود جديد لهذا الرقم.")
+                safe_send(call.message.chat.id, "⚠️ الرقم متاح لكن لم يصل كود جديد، جرب رقم آخر أو انتظر قليلاً.")
             else:
-                safe_send(call.message.chat.id, "❌ لا توجد أرقام متاحة حالياً.")
+                safe_send(call.message.chat.id, "❌ <b>عذراً يا سبع:</b> لا توجد أرقام مجانية متاحة حالياً في المصدر، حاول لاحقاً.")
         except:
-            safe_send(call.message.chat.id, "⚠️ حدث خطأ فني أثناء جلب الرقم.")
+            safe_send(call.message.chat.id, "⚠️ حدث خطأ في الاتصال بالسيرفر.")
 
 bot.polling()
