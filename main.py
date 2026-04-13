@@ -1,4 +1,5 @@
 import telebot
+from telebot import types
 import requests
 import time
 
@@ -13,47 +14,62 @@ headers = {
     'Accept': 'application/json',
 }
 
+# --- واجهة البوت الرئيسية ---
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     if message.from_user.id == ADMIN_ID:
-        markup = telebot.types.InlineKeyboardMarkup()
-        btn = telebot.types.InlineKeyboardButton("طلب رقم أمريكي 🇺🇸", callback_data="buy_usa")
-        markup.add(btn)
-        bot.reply_to(message, "مرحباً بك يا مبرمج. اضغط لطلب رقم تليجرام أمريكي:", reply_markup=markup)
-    else:
-        bot.reply_to(message, "عذراً، هذا البوت خاص بالمطور فقط.")
-
-@bot.callback_query_handler(func=lambda call: call.data == "buy_usa")
-def handle_buy(call):
-    bot.edit_message_text("جاري طلب الرقم من 5Sim...", call.message.chat.id, call.message.message_id)
-    
-    # طلب رقم أمريكي لتطبيق تليجرام
-    url = "https://5sim.net/v1/user/buy/activation/usa/any/telegram"
-    try:
-        response = requests.get(url, headers=headers)
-        data = response.json()
+        markup = types.InlineKeyboardMarkup(row_width=2)
         
-        if 'phone' in data:
-            order_id = data['id']
-            phone = data['phone']
-            bot.send_message(call.message.chat.id, f"✅ تم استلام الرقم:\n`{phone}`\n\nأدخله الآن في تليجرام، وسأرسل لك الكود هنا فور وصوله.")
-            
-            # محاولة جلب الكود (فحص كل 10 ثوانٍ لمدة دقيقتين)
-            for i in range(12):
-                time.sleep(10)
-                check_url = f"https://5sim.net/v1/user/check/{order_id}"
-                check_res = requests.get(check_url, headers=headers).json()
+        # أزرار الخدمات
+        btn1 = types.InlineKeyboardButton("🇺🇸 طلب رقم أمريكي", callback_data="buy_usa")
+        btn2 = types.InlineKeyboardButton("🎁 أرقام مجانية", url="https://receive-smss.com/")
+        btn3 = types.InlineKeyboardButton("💰 شحن الرصيد", callback_data="recharge")
+        btn4 = types.InlineKeyboardButton("🛠 الدعم الفني", url="https://t.me/your_username") # ضع يوزرك هنا
+        
+        markup.add(btn1, btn2, btn3, btn4)
+        
+        welcome_text = (
+            "<b>✨ أهلاً بك في بوت أرقام السبع المتطور ✨</b>\n\n"
+            "🛡 <b>حالة الحساب:</b> مفعّل (مطور)\n"
+            "🚀 <b>الخدمة:</b> جاهزة للاستخدام\n\n"
+            "<i>اختر من القائمة أدناه لبدء العمل:</i>"
+        )
+        bot.send_message(message.chat.id, welcome_text, reply_markup=markup, parse_mode='HTML')
+    else:
+        bot.reply_to(message, "❌ هذا البوت مخصص للمطور فقط.")
+
+# --- معالجة الضغط على الأزرار ---
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    if call.data == "buy_usa":
+        bot.answer_callback_query(call.id, "جاري معالجة طلبك... ⏳")
+        bot.edit_message_text("🔄 <b>جاري سحب رقم جديد من 5Sim...</b>", call.message.chat.id, call.message.message_id, parse_mode='HTML')
+        
+        # طلب الرقم
+        url = "https://5sim.net/v1/user/buy/activation/usa/any/telegram"
+        try:
+            response = requests.get(url, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                phone = data['phone']
+                order_id = data['id']
+                bot.send_message(call.message.chat.id, f"✅ <b>تم استلام الرقم بنجاح!</b>\n\nالرقم: <code>{phone}</code>\n\n<i>قم بإدخاله الآن وانتظر وصول الكود...</i>", parse_mode='HTML')
                 
-                if check_res.get('sms'):
-                    code = check_res['sms'][0]['code']
-                    bot.send_message(call.message.chat.id, f"📩 وصل كود التفعيل الخاص بك:\n`{code}`")
-                    return
-            
-            bot.send_message(call.message.chat.id, "❌ انتهى الوقت ولم يصل الكود. حاول مرة أخرى.")
-        else:
-            bot.send_message(call.message.chat.id, f"❌ خطأ: {data.get('errors', 'لا يوجد رصيد أو أرقام حالياً')}")
-            
-    except Exception as e:
-        bot.send_message(call.message.chat.id, f"⚠️ حدث خطأ تقني: {str(e)}")
+                # فحص الكود تلقائياً
+                for _ in range(15):
+                    time.sleep(10)
+                    check = requests.get(f"https://5sim.net/v1/user/check/{order_id}", headers=headers).json()
+                    if check.get('sms'):
+                        code = check['sms'][0]['code']
+                        bot.send_message(call.message.chat.id, f"📩 <b>كود التفعيل هو:</b>\n\n<code>{code}</code>", parse_mode='HTML')
+                        return
+                bot.send_message(call.message.chat.id, "⚠️ انتهى الوقت ولم يصل الكود.")
+            else:
+                bot.send_message(call.message.chat.id, "❌ <b>فشل الطلب:</b> تأكد من شحن رصيدك في 5Sim.")
+        except:
+            bot.send_message(call.message.chat.id, "⚠️ حدث خطأ في الاتصال بالمزود.")
+
+    elif call.data == "recharge":
+        bot.send_message(call.message.chat.id, "💳 لشحن رصيدك، يرجى التواصل مع الإدارة أو استخدام بوابة الفيزا في موقع 5Sim مباشرة.")
 
 bot.polling()
