@@ -5,22 +5,22 @@ from pymongo import MongoClient
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)  # لضمان قبول الاتصال من تطبيقك (HTML)
+CORS(app)
 
-# الرابط الخاص بك مع إضافة حل مشكلة الـ SSL لـ Render
+# الرابط الخاص بك مع إضافات الأمان لضمان العمل على Render
 MONGO_URI = "mongodb+srv://yyqp555_db_user:l3WH92tTtJADasI7@cluster0.gwjrncq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true"
 
 try:
-    # إعداد العميل مع مهلة زمنية 5 ثوانٍ للاتصال
+    # مهلة اتصال 5 ثوانٍ لضمان السرعة
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-    db = client['SabaaDB']  # اسم قاعدة البيانات
-    followers_collection = db['followers']  # اسم الجدول (Collection)
+    db = client['SabaaDB']
+    followers_collection = db['followers']
     
-    # اختبار الاتصال الفعلي
+    # التأكد من نجاح الاتصال
     client.admin.command('ping')
     print("تم الاتصال بقاعدة البيانات بنجاح ✅")
 except Exception as e:
-    print(f"فشل الاتصال بقاعدة البيانات: {e}")
+    print(f"فشل الاتصال: {e}")
 
 @app.route('/')
 def home():
@@ -33,16 +33,14 @@ def follow():
         username = data.get('username', 'مستخدم مجهول')
         rank = data.get('rank', 'عضو ملكي')
         
-        # تخزين بيانات المتابع الحقيقي في MongoDB
+        # تخزين في MongoDB
         follower_data = {
             "username": username,
             "rank": rank,
             "date": datetime.utcnow()
         }
-        
         followers_collection.insert_one(follower_data)
         
-        # الرد على التطبيق بنجاح
         return jsonify({
             "status": "success",
             "message": f"أهلاً بك يا {username} في جيش السبع!",
@@ -52,6 +50,5 @@ def follow():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    # تحديد المنفذ تلقائياً ليتوافق مع Render
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
