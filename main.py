@@ -5,20 +5,22 @@ from pymongo import MongoClient
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)  # لتسمح لتطبيقك (HTML) بالاتصال بالسيرفر بدون مشاكل
+CORS(app)  # لضمان قبول الاتصال من تطبيقك (HTML)
 
-# الرابط السحري الذي استخرجته من MongoDB
-MONGO_URI = "mongodb+srv://yyqp555_db_user:l3WH92tTtJADasI7@cluster0.gwjrncq.mongodb.net/?appName=Cluster0"
+# الرابط الخاص بك مع إضافة حل مشكلة الـ SSL لـ Render
+MONGO_URI = "mongodb+srv://yyqp555_db_user:l3WH92tTtJADasI7@cluster0.gwjrncq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&tlsAllowInvalidCertificates=true"
 
 try:
-    client = MongoClient(MONGO_URI)
+    # إعداد العميل مع مهلة زمنية 5 ثوانٍ للاتصال
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
     db = client['SabaaDB']  # اسم قاعدة البيانات
-    followers_collection = db['followers']
-    # اختبار الاتصال
+    followers_collection = db['followers']  # اسم الجدول (Collection)
+    
+    # اختبار الاتصال الفعلي
     client.admin.command('ping')
     print("تم الاتصال بقاعدة البيانات بنجاح ✅")
 except Exception as e:
-    print(f"فشل الاتصال: {e}")
+    print(f"فشل الاتصال بقاعدة البيانات: {e}")
 
 @app.route('/')
 def home():
@@ -29,9 +31,9 @@ def follow():
     try:
         data = request.json
         username = data.get('username', 'مستخدم مجهول')
-        rank = data.get('rank', 'عضو')
+        rank = data.get('rank', 'عضو ملكي')
         
-        # تخزين المتابع في MongoDB
+        # تخزين بيانات المتابع الحقيقي في MongoDB
         follower_data = {
             "username": username,
             "rank": rank,
@@ -40,6 +42,7 @@ def follow():
         
         followers_collection.insert_one(follower_data)
         
+        # الرد على التطبيق بنجاح
         return jsonify({
             "status": "success",
             "message": f"أهلاً بك يا {username} في جيش السبع!",
@@ -49,6 +52,6 @@ def follow():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    # تشغيل السيرفر
+    # تحديد المنفذ تلقائياً ليتوافق مع Render
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
