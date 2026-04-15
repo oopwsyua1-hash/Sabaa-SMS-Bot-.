@@ -1,91 +1,54 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
-import threading
-import time
-import requests
-import os
+from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # لتسمح لتطبيقك (HTML) بالاتصال بالسيرفر بدون مشاكل
 
-# --- إعدادات قاعدة البيانات ---
-# استبدل الرابط التالي برابط Connection String الذي حصلت عليه من MongoDB Atlas
-# تأكد من وضع كلمة المرور الصحيحة مكان كلمة <password>
-MONGO_URI = "mongodb+srv://qusai_admin:كلمة_مرورك_هنا@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority"
+# الرابط السحري الذي استخرجته من MongoDB
+MONGO_URI = "mongodb+srv://yyqp555_db_user:l3WH92tTtJADasI7@cluster0.gwjrncq.mongodb.net/?appName=Cluster0"
 
 try:
     client = MongoClient(MONGO_URI)
-    db = client['sabaa_database']
-    users_col = db['users']
+    db = client['SabaaDB']  # اسم قاعدة البيانات
+    followers_collection = db['followers']
+    # اختبار الاتصال
+    client.admin.command('ping')
     print("تم الاتصال بقاعدة البيانات بنجاح ✅")
 except Exception as e:
     print(f"فشل الاتصال: {e}")
 
-# --- نظام النبض (Keep-Alive) لمنع السيرفر من النوم ---
-def keep_alive():
-    while True:
-        try:
-            # انتظر حتى يعمل السيرفر ثم ابدأ بمناداته
-            # ملاحظة: ضع رابط Render الخاص بك هنا بعد أن تحصل عليه
-            server_url = "https://your-app-name.onrender.com/" 
-            requests.get(server_url)
-            print("النبض مستمر.. السيرفر مستيقظ 24 ساعة ✅")
-        except:
-            print("السيرفر لم يشتغل بعد أو الرابط غير صحيح..")
-        time.sleep(600) # يرسل طلب كل 10 دقائق
-
-# تشغيل النبض في خلفية السيرفر
-threading.Thread(target=keep_alive, daemon=True).start()
-
-# --- المسارات (Routes) ---
-
 @app.route('/')
 def home():
-    return "سيرفر السبع (Sab3 AI) يعمل الآن بكامل قوته! 👑"
+    return "سيرفر السبع يعمل بنجاح! 🚀"
 
-# 1. جلب بيانات المستخدم أو إنشاؤه عند البحث
-@app.route('/get_profile/<user_id>', methods=['GET'])
-def get_profile(user_id):
-    user = users_col.find_one({"user_id": user_id})
-    if not user:
-        # إذا كان المستخدم جديداً، ننشئ له ملفاً
-        new_user = {
-            "user_id": user_id,
-            "name": "مستخدم جديد",
-            "followers": 0,
-            "rank": "عضو"
-        }
-        users_col.insert_one(new_user)
-        user = new_user
-    
-    user.pop('_id', None) # إزالة معرف مونجو الداخلي
-    return jsonify(user)
-
-# 2. نظام المتابعة الحقيقي
 @app.route('/follow', methods=['POST'])
 def follow():
-    data = request.json
-    target_id = data.get('target_id') # الشخص الذي ستتابعه
-    
-    if not target_id:
-        return jsonify({"status": "error", "message": "ID مطلوب"}), 400
-
-    # زيادة عدد المتابعين للشخص المستهدف
-    result = users_col.find_one_and_update(
-        {"user_id": target_id},
-        {"$inc": {"followers": 1}},
-        return_document=True
-    )
-    
-    if result:
+    try:
+        data = request.json
+        username = data.get('username', 'مستخدم مجهول')
+        rank = data.get('rank', 'عضو')
+        
+        # تخزين المتابع في MongoDB
+        follower_data = {
+            "username": username,
+            "rank": rank,
+            "date": datetime.utcnow()
+        }
+        
+        followers_collection.insert_one(follower_data)
+        
         return jsonify({
-            "status": "success", 
-            "new_followers": result.get('followers', 0)
-        })
-    return jsonify({"status": "error", "message": "المستخدم غير موجود"}), 404
+            "status": "success",
+            "message": f"أهلاً بك يا {username} في جيش السبع!",
+            "total_followers": followers_collection.count_documents({})
+        }), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    # Render يستخدم منفذ متغير، لذا نستخدم os.environ لجلب المنفذ
-    port = int(os.environ.get("PORT", 5000))
+    # تشغيل السيرفر
+    port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
