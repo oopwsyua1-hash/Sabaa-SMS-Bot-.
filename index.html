@@ -3,284 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETERNA CYBER ANALYTICS | الخال قصي VIP</title>
+    <title>KHAL QUSAI VIP | CYBER CORE</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #05070b;
-            --panel-bg: #0b0f17;
-            --terminal-bg: #030508;
-            --neon-blue: #007aff;
-            --neon-green: #00e676;
-            --neon-red: #ff3b30;
-            --text-gold: #ffcc00;
-            --text-light: #ffffff;
-            --text-dim: #4f5e75;
+            --matrix-green: #00ff66;
+            --dark-bg: #030704;
+            --panel-bg: #0a110c;
+            --border-green: rgba(0, 255, 102, 0.25);
+            --text-gray: #7a9485;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace, system-ui; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace, system-ui;
+        }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            background-image: linear-gradient(rgba(0, 122, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 122, 255, 0.02) 1px, transparent 1px);
-            background-size: 25px 25px;
-            padding-bottom: 30px;
+            background-color: var(--dark-bg);
+            color: #ffffff;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
+            padding-bottom: 40px;
+            /* خلفية تحاكي كود الماتريكس التكنولوجي الداكن */
+            background-image: linear-gradient(rgba(0, 255, 102, 0.015) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 255, 102, 0.015) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
         /* الهيدر العلوي */
         .cyber-header {
-            width: 100%; max-width: 480px; background: #080b11; padding: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid #121824; box-shadow: 0 2px 15px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 480px;
+            background: #060a07;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--matrix-green);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.1);
         }
-        .header-title { font-weight: bold; font-size: 1.1rem; color: var(--neon-blue); letter-spacing: 1px; }
-        .dev-badge { font-size: 0.8rem; color: var(--neon-green); background: rgba(0,230,118,0.07); padding: 6px 12px; border-radius: 4px; border: 1px solid rgba(0,230,118,0.2); font-weight: bold; }
-
-        .main-container { width: 100%; max-width: 480px; padding: 12px; }
-
-        /* شاشة التيرمنال اليدوية السريعة */
-        .terminal-box {
-            background: var(--terminal-bg); border: 1px solid #162030; border-radius: 8px;
-            padding: 12px; margin-bottom: 15px; font-size: 0.8rem; direction: ltr; text-align: left;
-            position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,230,118,0.05);
+        .header-title {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--matrix-green);
+            text-shadow: 0 0 5px rgba(0, 255, 102, 0.5);
         }
-        .terminal-box::before {
-            content: "SECURE NODE // TERMINAL"; position: absolute; top: 2px; right: 8px;
-            font-size: 0.6rem; color: var(--text-dim); font-weight: bold;
-        }
-        .log-line { margin-bottom: 4px; word-break: break-all; }
-        .log-info { color: var(--neon-blue); }
-        .log-success { color: var(--neon-green); }
-        .log-warn { color: var(--text-gold); }
-
-        /* قسم لوحة الفحص وكسر التشفير */
-        .decrypt-panel {
-            background: var(--panel-bg); border: 1px solid #1a2436; border-radius: 12px;
-            padding: 20px 15px; margin-bottom: 15px; position: relative;
-        }
-        .panel-tag { position: absolute; top: -10px; right: 15px; background: var(--neon-blue); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
-        
-        /* العداد الرقمي المطور للطيارة */
-        .live-status-container {
-            display: flex; align-items: center; justify-content: space-between;
-            background: #05070a; padding: 15px; border-radius: 8px; border: 1px solid #172132; margin-bottom: 15px;
-        }
-        .live-multiplier { font-size: 2.3rem; font-weight: bold; color: var(--text-light); text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        .live-multiplier.flew { color: var(--neon-red); text-shadow: 0 0 10px rgba(255,59,48,0.4); }
-
-        /* سجل الجولات السابقة التكتيكي */
-        .history-grid { display: flex; gap: 8px; justify-content: center; overflow-x: auto; padding: 5px 0 15px; }
-        .history-badge { background: #111722; border: 1px solid #1c273a; color: #a4b3cc; font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: bold; min-width: 55px; text-align: center; }
-
-        /* حقول الإدخال والتحقق */
-        .input-group { margin-bottom: 15px; text-align: right; }
-        .input-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; display: block; }
-        .input-label i { margin-left: 5px; color: var(--neon-blue); }
-        
-        .cyber-input {
-            width: 100%; padding: 14px; background: #04060a; border: 1px solid #202d42;
-            color: var(--text-light); border-radius: 6px; font-size: 1rem; text-align: center;
-            outline: none; font-weight: bold; letter-spacing: 1px; transition: 0.2s;
-        }
-        .cyber-input:focus { border-color: var(--neon-blue); box-shadow: 0 0 8px rgba(0,122,255,0.2); }
-
-        .promo-display {
-            background: rgba(255, 204, 0, 0.04); border: 1px dashed var(--text-gold);
-            padding: 12px; border-radius: 6px; font-size: 1.2rem; font-weight: bold;
-            color: var(--text-gold); text-align: center; letter-spacing: 2px;
-            display: flex; justify-content: space-between; align-items: center;
+        .dev-badge {
+            font-size: 0.8rem;
+            color: #ffffff;
+            background: rgba(0, 255, 102, 0.15);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--matrix-green);
         }
 
-        /* زر البدء الضخم */
-        .action-btn {
-            background: linear-gradient(135deg, #0052b3, var(--neon-blue));
-            color: white; border: none; padding: 16px; width: 100%; border-radius: 8px;
-            font-size: 1rem; font-weight: bold; cursor: pointer; letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0,122,255,0.25); transition: 0.2s;
+        .main-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 15px;
         }
-        .action-btn:active { transform: scale(0.98); opacity: 0.9; }
 
-        /* تأثيرات محاكاة الاختراق العائمة (Overlay) */
-        .overlay-screen {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 5, 8, 0.96); z-index: 9999; max-width: 480px; left: 50%; transform: translateX(-50%);
-            padding: 25px 15px; direction: ltr; text-align: left; box-sizing: border-box;
+        /* واجهة تم الدعس الكبرى */
+        .hacker-banner {
+            background: linear-gradient(to bottom, rgba(3, 7, 4, 0.4), #0a110c), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop') center/cover;
+            border: 1px solid var(--border-green);
+            border-radius: 12px;
+            padding: 30px 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.8);
         }
-        .matrix-text { font-family: monospace; font-size: 0.75rem; color: var(--neon-green); height: 80%; overflow-y: hidden; margin-bottom: 20px; line-height: 1.4; }
+        .skull-icon {
+            font-size: 3rem;
+            color: var(--matrix-green);
+            margin-bottom: 10px;
+            animation: pulse 2s infinite alternate;
+            text-shadow: 0 0 15px var(--matrix-green);
+        }
+        .hacker-banner h2 {
+            font-size: 2rem;
+            color: #ff3b30;
+            text-shadow: 0 0 10px #ff3b30, 0 0 20px #ff3b30;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+        .hacker-banner p {
+            font-size: 0.8rem;
+            color: var(--matrix-green);
+            letter-spacing: 1px;
+        }
+
+        /* قائمة التسميات والأدوات الرئيسية */
+        .tools-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .tool-item {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-green);
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tool-item:active {
+            transform: scale(0.98);
+            background: rgba(0, 255, 102, 0.05);
+            border-color: var(--matrix-green);
+        }
+        .tool-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .tool-count {
+            color: var(--matrix-green);
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-width: 25px;
+        }
+        .tool-name {
+            font-size: 0.95rem;
+            color: #e0e6e2;
+            font-weight: bold;
+        }
+        .tool-left {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+        .tool-item.active-folder .tool-left {
+            color: var(--matrix-green);
+            animation: folderOpen 0.3s forwards;
+        }
+
+        /* النافذة المنبثقة التلقائية لعرض الملفات والبيانات بالداخل */
+        .overlay-file-manager {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 7, 4, 0.98);
+            z-index: 9999;
+            max-width: 480px;
+            left: 50%; transform: translateX(-50%);
+            padding: 20px 15px;
+            flex-direction: column;
+        }
+        .manager-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-green);
+            margin-bottom: 15px;
+        }
+        .manager-title {
+            color: var(--matrix-green);
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .close-btn {
+            background: none; border: none; color: #ff3b30; font-size: 1.4rem; cursor: pointer;
+        }
+
+        /* صندوق استعراض الملفات الداخلي */
+        .files-box {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-right: 2px;
+        }
+        .file-row {
+            background: #080f0b;
+            border: 1px solid rgba(0,255,102,0.1);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #d1ded6;
+        }
+        .file-info i { color: #ffcc00; } /* مجلدات داخلية باللون الذهبي */
+        .file-info i.fa-file-code { color: var(--matrix-green); } /* ملفات برمجية */
+
+        .file-status {
+            font-size: 0.75rem;
+            background: rgba(0,255,102,0.07);
+            color: var(--matrix-green);
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,255,102,0.15);
+        }
+
+        /* شاشة صغيرة لمحاكاة فحص تيرمنال حقيقي بالأسفل */
+        .mini-terminal {
+            background: #000000;
+            border: 1px solid var(--border-green);
+            border-radius: 6px;
+            padding: 10px;
+            height: 100px;
+            overflow-y: hidden;
+            font-size: 0.7rem;
+            color: var(--matrix-green);
+            direction: ltr; text-align: left;
+            margin-top: 15px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
     <div class="cyber-header">
-        <div class="header-title"><i class="fa-solid fa-shield-halved"></i> AETERNA INTERCEPTOR</div>
-        <div class="dev-badge"><i class="fa-solid fa-user-secret"></i> المطور الخال قصي VIP</div>
+        <div class="header-title"><i class="fa-solid fa-terminal"></i> CORE INTERCEPTOR v4.0</div>
+        <div class="dev-badge">المطور الخال قصي VIP</div>
     </div>
 
     <div class="main-container">
 
-        <div class="terminal-box" id="terminalLogs">
-            <div class="log-line log-info">[SYSTEM] Initializing cloud matrix tunnel...</div>
-            <div class="log-line log-success">[AUTH] Handshake verified with secure node.</div>
-            <div class="log-line log-warn">[HASH] DB signature active on layer 7.</div>
+        <div class="hacker-banner">
+            <div class="skull-icon"><i class="fa-solid fa-skull-crossbones"></i></div>
+            <h2>تـم الـدعـس</h2>
+            <p>ROOT SECURITY SYSTEM BY ABU NIMR</p>
         </div>
 
-        <div class="decrypt-panel">
-            <div class="panel-tag">LIVE SIGNATURE REALTIME</div>
-
-            <div class="live-status-container">
-                <div>
-                    <div style="font-size: 0.65rem; color: var(--text-dim); font-weight: bold; margin-bottom: 2px; text-align: right;">ROUND DATA STREAM</div>
-                    <div style="font-size: 0.8rem; color: var(--neon-green); font-weight: bold; display: flex; align-items: center; gap: 5px;" id="statusText">
-                        <i class="fa-solid fa-satellite-dish"></i> CONNECTED
-                    </div>
+        <div class="tools-list">
+            
+            <div class="tool-item" onclick="openTargetFolder('أختراق الاجهزة', 'devices')">
+                <div class="tool-right">
+                    <span class="tool-count">20</span>
+                    <span class="tool-name">أختراق الاجهزة</span>
                 </div>
-                <div class="live-multiplier" id="crashCounter">1.00x</div>
+                <div class="tool-left"><i class="fa-solid fa-folder"></i></div>
             </div>
 
-            <div class="history-grid" id="historyGrid">
-                <div class="history-badge">4.12x</div>
-                <div class="history-badge">3.80x</div>
-                <div class="history-badge">3.44x</div>
-                <div class="history-badge">3.76x</div>
-                <div class="history-badge">1.82x</div>
-                <div class="history-badge">2.34x</div>
-            </div>
-
-            <div class="input-group">
-                <span class="input-label"><i class="fa-solid fa-key"></i> نظام التحقق من البروموكود التفاعلي</span>
-                <div class="promo-display">
-                    <span>KAJ0117</span>
-                    <i class="fa-regular fa-copy" style="cursor: pointer; font-size: 1.1rem;" onclick="navigator.clipboard.writeText('KAJ0117'); alert('تم نسخ رمز التحقق المعتمد KAJ0117')"></i>
+            <div class="tool-item" onclick="openTargetFolder('إختراق المواقع والنسخ الاحتياطي', 'sites')">
+                <div class="tool-right">
+                    <span class="tool-count">13</span>
+                    <span class="tool-name">إختراق المواقع والسيرفرات</span>
                 </div>
+                <div class="tool-left"><i class="fa-solid fa-folder"></i></div>
             </div>
 
-            <div class="input-group">
-                <span class="input-label"><i class="fa-solid fa-fingerprint"></i> معرف الحساب المستهدف (ID المكون من 9 أرقام)</span>
-                <input type="number" class="cyber-input" id="accountIdInput" placeholder="000000000">
+            <div class="tool-item" onclick="openTargetFolder('إختراق شبكات Wi-Fi', 'wifi')">
+                <div class="tool-right">
+                    <span class="tool-count">3</span>
+                    <span class="tool-name">إختراق شبكات Wi-Fi والثغرات</span>
+                </div>
+                <div class="tool-left"><i class="fa-solid fa-folder"></i></div>
             </div>
 
-            <button class="action-btn" onclick="triggerCyberCrack()">
-                <i class="fa-solid fa-terminal" style="margin-left: 8px;"></i> INITIALIZE LIVE SOCKET LINK & DATA STREAM
-            </button>
+            <div class="tool-item" onclick="openTargetFolder('أدوات كسر كلمات السر', 'crypto')">
+                <div class="tool-right">
+                    <span class="tool-count">8</span>
+                    <span class="tool-name">أدوات كسر كلمات السر والتشفير</span>
+                </div>
+                <div class="tool-left"><i class="fa-solid fa-folder"></i></div>
+            </div>
+
+            <div class="tool-item" onclick="openTargetFolder('تطبيقات أندرويد المعدلة', 'android')">
+                <div class="tool-right">
+                    <span class="tool-count">41</span>
+                    <span class="tool-name">تطبيقات أندرويد وأدوات Termux</span>
+                </div>
+                <div class="tool-left"><i class="fa-solid fa-folder"></i></div>
+            </div>
+
         </div>
-
     </div>
 
-    <div class="overlay-screen" id="overlayCrack">
-        <div class="matrix-text" id="matrixConsole"></div>
-        <div style="text-align: center;">
-            <span style="color: var(--text-gold); font-weight: bold; font-size: 0.9rem; display: block; margin-bottom: 15px;" id="loadingText">جاري فحص وتخطي طبقات الحماية وتأكيد المزامنة...</span>
+    <div class="overlay-file-manager" id="fileManagerOverlay">
+        <div class="manager-header">
+            <div class="manager-title" id="currentFolderTitle">عرض المجلد: </div>
+            <button class="close-btn" onclick="closeFileManager()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="files-box" id="filesDynamicContainer">
+            </div>
+
+        <div class="mini-terminal" id="miniTerminalLog">
+            [SYS] Waiting for node command stream...<br>
+            [OK] Active directories mapped safely.
         </div>
     </div>
 
     <script>
-        // محاكاة حية وتلقائية لشاشة الـ Terminal بالخلفية لتبدو حقيقية جداً
-        const logsContainer = document.getElementById('terminalLogs');
-        const simulatedLogs = [
-            { text: "[INFO] Fetching current session state tokens...", type: "log-info" },
-            { text: "[OK] Packets aligned on port 8443 successfully.", type: "log-success" },
-            { text: "[WARN] Jitter detected: 12ms. Realignment initialized.", type: "log-warn" },
-            { text: "[SYNC] Memory offset injected at 0x7FFA83BC.", type: "log-info" },
-            { text: "[OK] Node handshake updated dynamically.", type: "log-success" }
-        ];
-        
-        setInterval(() => {
-            let randomLog = simulatedLogs[Math.floor(Math.random() * simulatedLogs.length)];
-            let newLine = document.createElement('div');
-            newLine.className = `log-line ${randomLog.type}`;
-            newLine.innerText = randomLog.text;
-            logsContainer.appendChild(newLine);
-            if (logsContainer.children.length > 5) {
-                logsContainer.removeChild(logsContainer.children[0]);
-            }
-        }, 3500);
+        // قاعدة بيانات للملفات التخيلية الحماسية لكل مجلد
+        const folderDatabase = {
+            devices: [
+                { name: "Bypass_Lockscreen_V2.sh", type: "code", size: "READY" },
+                { name: "Remote_Android_Mirror.py", type: "code", size: "CONNECTED" },
+                { name: "Device_Info_Extractor.sh", type: "code", size: "SECURE" },
+                { name: "Payload_Signer_Pro.apk", type: "apk", size: "STABLE" }
+            ],
+            sites: [
+                { name: "Cloudflare_Bypass_Route.py", type: "code", size: "ACTIVE" },
+                { name: "SQL_Injection_AutoScan.pl", type: "code", size: "ONLINE" },
+                { name: "Database_Dump_Target.sql", type: "db", size: "ENCRYPTED" }
+            ],
+            wifi: [
+                { name: "Handshake_Decryptor_Pro.sh", type: "code", size: "WAIT_DEEP" },
+                { name: "WPA2_Wordlist_Brute.txt", type: "text", size: "14.2 MB" },
+                { name: "Pixie_Dust_Attack_Node.py", type: "code", size: "INJECTED" }
+            ],
+            crypto: [
+                { name: "MD5_Hash_Cracker.py", type: "code", size: "RUNNING" },
+                { name: "SHA256_Salt_Bypasser.sh", type: "code", size: "STABLE" },
+                { name: "Password_Gen_Custom.py", type: "code", size: "VIP_MODE" }
+            ],
+            android: [
+                { name: "Termux_Auto_Setup.sh", type: "code", size: "VERIFIED" },
+                { name: "MT_Manager_VIP_Helper.apk", type: "apk", size: "INSTALLED" },
+                { name: "Smali_Bytecode_Patcher.py", type: "code", size: "LOADED" }
+            ]
+        };
 
-        // محاكاة عداد الطيارة المزامَن الحركي التلقائي
-        const crashCounter = document.getElementById('crashCounter');
-        const statusText = document.getElementById('statusText');
-        const historyGrid = document.getElementById('historyGrid');
+        const overlay = document.getElementById('fileManagerOverlay');
+        const folderTitle = document.getElementById('currentFolderTitle');
+        const filesContainer = document.getElementById('filesDynamicContainer');
+        const miniLog = document.getElementById('miniTerminalLog');
 
-        function runLiveCrashEngine() {
-            let current = 1.00;
-            let limit = (Math.random() * (4.80 - 1.15) + 1.15).toFixed(2);
-            crashCounter.classList.remove('flew');
-            statusText.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> CONNECTED';
-            statusText.style.color = "var(--neon-green)";
-
-            let interval = setInterval(() => {
-                if (current >= limit) {
-                    clearInterval(interval);
-                    crashCounter.innerText = "FLEW AWAY! " + current.toFixed(2) + "x";
-                    crashCounter.classList.add('flew');
-                    statusText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> DISCONNECTED';
-                    statusText.style.color = "var(--neon-red)";
-                    
-                    // إضافة الجولة الفائتة للسجل تلقائياً
-                    let newBadge = document.createElement('div');
-                    newBadge.className = 'history-badge';
-                    newBadge.innerText = current.toFixed(2) + "x";
-                    historyGrid.insertBefore(newBadge, historyGrid.firstChild);
-                    if(historyGrid.children.length > 6) historyGrid.removeChild(historyGrid.lastChild);
-
-                    setTimeout(runLiveCrashEngine, 3000);
-                } else {
-                    current += 0.05;
-                    crashCounter.innerText = current.toFixed(2) + "x";
-                }
-            }, 65);
-        }
-        runLiveCrashEngine();
-
-        // محاكاة واجهة الاختراق الكبرى (كسر كلمات السر وتخطي الجدران النارية واهمياً)
-        function triggerCyberCrack() {
-            let idVal = document.getElementById('accountIdInput').value;
-            if(idVal.trim().length < 8) {
-                alert("الرجاء إدخال معرف ID صالح (مكون من 8 إلى 12 رقم) لبدء بناء النفق السحابي!");
-                return;
-            }
-
-            const overlay = document.getElementById('overlayCrack');
-            const consoleBox = document.getElementById('matrixConsole');
-            const loadText = document.getElementById('loadingText');
+        // دالة فتح المجلد واستعراض الملفات بالداخل فوراً
+        function openTargetFolder(folderName, databaseKey) {
+            folderTitle.innerText = `📂 المجلد الحالي // ${folderName}`;
+            filesContainer.innerHTML = ""; // تنظيف المحتوى السابق
             
-            overlay.style.display = "block";
-            consoleBox.innerHTML = "";
-            loadText.innerText = "جاري تفعيل الاتصال عبر خادم المطور الخال قصي VIP...";
+            overlay.style.display = "flex";
+            
+            // محاكاة سريعة لأسطر التيرمنال بالأسفل
+            miniLog.innerHTML = `[INFO] Initializing access to pool: '${databaseKey}'...<br>[AUTH] Security validation cleared by Al-Khal Qusai v4.`;
 
-            let steps = [
-                `INITIALIZING BRUTE-FORCE DECRYPT ENGINE ON ID: ${idVal}...`,
-                "CONNECTING TO INSTANCE SATELLITE: BURSA-TURKEY-NODE-1...",
-                "STATUS: 200 OK - TARGET SERVER ACKNOWLEDGED.",
-                "BYPASSING SECURE LAYER 4 FIREWALL ROUTE... [SUCCESS]",
-                "DECRYPTING SEED HASH: SHA-256 [7a8b9c2d1e0f394a5b6c]",
-                "EXTRACTING ACTIVE MEMORY BUFFER BLOCKS...",
-                "INJECTING PACKETS INTO MAIN LOOP BUFFER... DONE.",
-                "STABILIZING WIRELESS CLOUD EMULATOR FOR PHONES...",
-                "VERIFYING LICENSE AND VIP ACCESS GRANTED BY 'AL-KHAL QUSAI'...",
-                "CONNECTION SYNCED 100% // REDIRECTING STREAM TO MAIN DASHBOARD."
-            ];
+            // جلب البيانات وبنائها داخل الواجهة فوراً
+            const selectedFiles = folderDatabase[databaseKey] || [];
+            
+            selectedFiles.forEach((file, index) => {
+                setTimeout(() => {
+                    let iconClass = "fa-solid fa-file-code"; // افتراضي ملف برمجيات خضراء
+                    if(file.name.endsWith('.apk')) iconClass = "fa-solid fa-android";
+                    if(file.name.endsWith('.txt')) iconClass = "fa-solid fa-file-lines";
 
-            let index = 0;
-            let textTimer = setInterval(() => {
-                if (index < steps.length) {
-                    consoleBox.innerHTML += `<div><span style="color:#00e676;">[~]</span> ${steps[index]}</div>`;
-                    index++;
-                } else {
-                    clearInterval(textTimer);
-                    loadText.innerHTML = "<span style='color:#00e676;'>✓ تم تأكيد الربط الرقمي المتقدم بنجاح!</span>";
-                    setTimeout(() => {
-                        overlay.style.display = "none";
-                        alert("تمت المزامنة وحقن الحزم بنجاح في الواجهة السحابية التفاعلية.");
-                    }, 1500);
-                }
-            }, 450);
+                    const fileRow = document.createElement('div');
+                    fileRow.className = "file-row";
+                    fileRow.onclick = () => {
+                        miniLog.innerHTML += `<br><span style="color:#ffffff;">[+] Executing: ${file.name}... [OK]</span>`;
+                        alert(`تمت محاكاة تفعيل وتشغيل الأداة الرقمية: ${file.name} بنجاح داخل النطاق.`);
+                    };
+
+                    fileRow.innerHTML = `
+                        <div class="file-info">
+                            <i class="${iconClass}"></i>
+                            <span>${file.name}</span>
+                        </div>
+                        <div class="file-status">${file.size}</div>
+                    `;
+                    filesContainer.appendChild(fileRow);
+                    
+                    // تمرير التيرمنال تلقائياً للأسفل لتبدو طبيعية
+                    miniLog.scrollTop = miniLog.scrollHeight;
+                }, index * 80); // تأثير ظهور تتابعي فخم وسريع للأسطر
+            });
+        }
+
+        // دالة إغلاق مستعرض الملفات والرجوع للرئيسية
+        function closeFileManager() {
+            overlay.style.display = "none";
         }
     </script>
 </body>
 </html>
-
