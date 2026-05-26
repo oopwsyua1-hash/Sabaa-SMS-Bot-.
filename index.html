@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة المطور الخال قصي | السكربت التفاعلي الحقيقي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0c0d14;
+            --panel-bg: #141722;
+            --accent-color: #38bdf8;
+            --danger-color: #f43f5e;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 430px;
+            background: var(--panel-bg);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #2c3148;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        /* الهيدر */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #2c3148;
+            padding-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* شاشة العداد الحركي */
+        .game-screen {
+            background: #07080e;
+            border-radius: 15px;
+            padding: 30px 15px;
+            text-align: center;
+            border: 1px solid #1e293b;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .multiplier-text {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            transition: color 0.2s;
+        }
+
+        .multiplier-text.crash {
+            color: var(--danger-color);
+        }
+
+        /* السجل المقسم أسفل الشاشة */
+        .history-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .history-badge {
+            background: #1e293b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #a855f7;
+        }
+
+        /* خطوات التفعيل وحقول الإدخال */
+        .step-box {
+            background: #0f121d;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #1e2538;
+        }
+
+        .step-title {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .promo-display {
+            background: #141722;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-align: center;
+            border: 1px dashed #334155;
+            color: #f59e0b;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #141722;
+            color: white;
+            text-align: center;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--accent-color);
+        }
+
+        /* أزرار التشغيل والربط */
+        .action-btn {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: black;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        /* العداد التفاعلي للفحص */
+        .status-loader {
+            display: none;
+            margin-top: 15px;
+            background: #07080e;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background: #1e293b;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+        }
+
+        /* الفوتر لحفظ الحقوق */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-top: 1px solid #2c3148;
+            padding-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="header">
+            <h1>لوحة تفعيل ميزات VIP</h1>
+            <p>تطوير وتعديل: المطور الخال قصي</p>
+        </div>
+
+        <div class="game-screen">
+            <div class="multiplier-text" id="liveMultiplier">1.00x</div>
+            
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 10px;">سجل آخر الجولات المستقرة</div>
+            <div class="history-container" id="historyBox">
+                <div class="history-badge">2.34x</div>
+                <div class="history-badge">1.82x</div>
+                <div class="history-badge">5.12x</div>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title"><i class="fa-solid fa-key"></i> جاهزية النظام والبروموكود التفاعلي</div>
+            <div class="promo-display">KAJ0117</div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title"><i class="fa-solid fa-user-shield"></i> تحديد الهوية والربط الرقمي</div>
+            <input type="number" id="userId" placeholder="أدخل معرف الحساب (ID) المكون من 9 أرقام">
+        </div>
+
+        <button class="action-btn" id="submitBtn" onclick="runScriptConnection()">بدء فحص الاتصال ومزامنة المعرف</button>
+
+        <div class="status-loader" id="statusPanel">
+            <div id="statusMessage" style="color: var(--accent-color);">جاري الاتصال بقاعدة الحزم البرمجية...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="barFill"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>جميع الحقوق محفوظة © الخال قصي | برمجيات الويب المتطورة</p>
+        </div>
+    </div>
+
+    <script>
+        // دالة تشغيل عداد الطائرة التلقائي فور فتح الصفحة ليحاكي الأجواء
+        function runAutoMultiplier() {
+            let display = document.getElementById('liveMultiplier');
+            let current = 1.00;
+            // توليد رقم عشوائي واقعي يتوقف عنده العداد تلقائياً
+            let target = (Math.random() * (4.50 - 1.10) + 1.10).toFixed(2);
+            
+            display.classList.remove('crash');
+            
+            let gameLoop = setInterval(() => {
+                if (current >= target) {
+                    clearInterval(gameLoop);
+                    display.innerText = "Flew Away! " + current.toFixed(2) + "x";
+                    display.classList.add('crash');
+                    
+                    // تحديث سجل الجولات السابقة بالرقم الجديد لتبدو الواجهة حية
+                    updateHistory(current.toFixed(2) + "x");
+                    
+                    // إعادة تشغيل جولة جديدة تلقائياً بعد 3 ثوانٍ من الانفجار
+                    setTimeout(runAutoMultiplier, 3000);
+                } else {
+                    current += 0.04;
+                    display.innerText = current.toFixed(2) + "x";
+                }
+            }, 50);
+        }
+
+        // دالة إضافة النتيجة الجديدة في السجل الحركي
+        function updateHistory(newRecord) {
+            let box = document.getElementById('historyBox');
+            let badge = document.createElement('div');
+            badge.className = 'history-badge';
+            badge.innerText = newRecord;
+            box.insertBefore(badge, box.firstChild);
+            if(box.children.length > 5) {
+                box.removeChild(box.lastChild);
+            }
+        }
+
+        // تشغيل العداد تلقائياً عند تحميل الصفحة
+        runAutoMultiplier();
+
+        // دالة ربط وفحص المعرف (ID) التفاعلية عند ضغط المستخدم على الزر
+        function runScriptConnection() {
+            let id = document.getElementById('userId').value;
+            let btn = document.getElementById('submitBtn');
+            let panel = document.getElementById('statusPanel');
+            let fill = document.getElementById('barFill');
+            let msg = document.getElementById('statusMessage');
+
+            if(id.trim().length < 9) {
+                alert("يرجى إدخال معرف (ID) صحيح ومكون من 9 أرقام للتحقق من الاتصال!");
+                return;
+            }
+
+            btn.disabled = true;
+            panel.style.display = 'block';
+            let width = 0;
+
+            let process = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(process);
+                    msg.innerText = "تم التحقق ومزامنة الحساب بنجاح تحت إشراف المطور الخال قصي! 🟢";
+                    msg.style.color = "#10b981";
+                    btn.disabled = false;
+                } else {
+                    width++;
+                    fill.style.width = width + '%';
+                    if(width == 25) msg.innerText = "جاري قراءة ملفات الحساب لـ المعرف: " + id;
+                    if(width == 60) msg.innerText = "جاري التأكد من مطابقة كود النظام التفعيلي التلقائي...";
+                    if(width == 85) msg.innerText = "جاري حقن الحزم النظيفة وتأمين قناة البيانات الفورية...";
+                }
+            }, 45);
+        }
+    </script>
+</body>
+</html>
