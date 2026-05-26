@@ -3,326 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة المطور الخال قصي | السكربت التفاعلي الحقيقي</title>
+    <title>AETERNA CYBER ANALYTICS | الخال قصي VIP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0c0d14;
-            --panel-bg: #141722;
-            --accent-color: #38bdf8;
-            --danger-color: #f43f5e;
-            --text-main: #ffffff;
-            --text-muted: #94a3b8;
+            --bg-dark: #05070b;
+            --panel-bg: #0b0f17;
+            --terminal-bg: #030508;
+            --neon-blue: #007aff;
+            --neon-green: #00e676;
+            --neon-red: #ff3b30;
+            --text-gold: #ffcc00;
+            --text-light: #ffffff;
+            --text-dim: #4f5e75;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace, system-ui; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 15px;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            background-image: linear-gradient(rgba(0, 122, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 122, 255, 0.02) 1px, transparent 1px);
+            background-size: 25px 25px;
+            padding-bottom: 30px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .wrapper {
-            width: 100%;
-            max-width: 430px;
-            background: var(--panel-bg);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid #2c3148;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        /* الهيدر العلوي */
+        .cyber-header {
+            width: 100%; max-width: 480px; background: #080b11; padding: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #121824; box-shadow: 0 2px 15px rgba(0,0,0,0.5);
         }
+        .header-title { font-weight: bold; font-size: 1.1rem; color: var(--neon-blue); letter-spacing: 1px; }
+        .dev-badge { font-size: 0.8rem; color: var(--neon-green); background: rgba(0,230,118,0.07); padding: 6px 12px; border-radius: 4px; border: 1px solid rgba(0,230,118,0.2); font-weight: bold; }
 
-        /* الهيدر */
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #2c3148;
-            padding-bottom: 15px;
-        }
+        .main-container { width: 100%; max-width: 480px; padding: 12px; }
 
-        .header h1 {
-            font-size: 1.4rem;
-            color: var(--accent-color);
-            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        /* شاشة التيرمنال اليدوية السريعة */
+        .terminal-box {
+            background: var(--terminal-bg); border: 1px solid #162030; border-radius: 8px;
+            padding: 12px; margin-bottom: 15px; font-size: 0.8rem; direction: ltr; text-align: left;
+            position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,230,118,0.05);
         }
+        .terminal-box::before {
+            content: "SECURE NODE // TERMINAL"; position: absolute; top: 2px; right: 8px;
+            font-size: 0.6rem; color: var(--text-dim); font-weight: bold;
+        }
+        .log-line { margin-bottom: 4px; word-break: break-all; }
+        .log-info { color: var(--neon-blue); }
+        .log-success { color: var(--neon-green); }
+        .log-warn { color: var(--text-gold); }
 
-        .header p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 5px;
+        /* قسم لوحة الفحص وكسر التشفير */
+        .decrypt-panel {
+            background: var(--panel-bg); border: 1px solid #1a2436; border-radius: 12px;
+            padding: 20px 15px; margin-bottom: 15px; position: relative;
         }
+        .panel-tag { position: absolute; top: -10px; right: 15px; background: var(--neon-blue); color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+        
+        /* العداد الرقمي المطور للطيارة */
+        .live-status-container {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #05070a; padding: 15px; border-radius: 8px; border: 1px solid #172132; margin-bottom: 15px;
+        }
+        .live-multiplier { font-size: 2.3rem; font-weight: bold; color: var(--text-light); text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .live-multiplier.flew { color: var(--neon-red); text-shadow: 0 0 10px rgba(255,59,48,0.4); }
 
-        /* شاشة العداد الحركي */
-        .game-screen {
-            background: #07080e;
-            border-radius: 15px;
-            padding: 30px 15px;
-            text-align: center;
-            border: 1px solid #1e293b;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
+        /* سجل الجولات السابقة التكتيكي */
+        .history-grid { display: flex; gap: 8px; justify-content: center; overflow-x: auto; padding: 5px 0 15px; }
+        .history-badge { background: #111722; border: 1px solid #1c273a; color: #a4b3cc; font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: bold; min-width: 55px; text-align: center; }
 
-        .multiplier-text {
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #ffffff;
-            transition: color 0.2s;
+        /* حقول الإدخال والتحقق */
+        .input-group { margin-bottom: 15px; text-align: right; }
+        .input-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; display: block; }
+        .input-label i { margin-left: 5px; color: var(--neon-blue); }
+        
+        .cyber-input {
+            width: 100%; padding: 14px; background: #04060a; border: 1px solid #202d42;
+            color: var(--text-light); border-radius: 6px; font-size: 1rem; text-align: center;
+            outline: none; font-weight: bold; letter-spacing: 1px; transition: 0.2s;
         }
-
-        .multiplier-text.crash {
-            color: var(--danger-color);
-        }
-
-        /* السجل المقسم أسفل الشاشة */
-        .history-container {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .history-badge {
-            background: #1e293b;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: #a855f7;
-        }
-
-        /* خطوات التفعيل وحقول الإدخال */
-        .step-box {
-            background: #0f121d;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #1e2538;
-        }
-
-        .step-title {
-            font-size: 0.9rem;
-            color: var(--accent-color);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .cyber-input:focus { border-color: var(--neon-blue); box-shadow: 0 0 8px rgba(0,122,255,0.2); }
 
         .promo-display {
-            background: #141722;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-align: center;
-            border: 1px dashed #334155;
-            color: #f59e0b;
+            background: rgba(255, 204, 0, 0.04); border: 1px dashed var(--text-gold);
+            padding: 12px; border-radius: 6px; font-size: 1.2rem; font-weight: bold;
+            color: var(--text-gold); text-align: center; letter-spacing: 2px;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #141722;
-            color: white;
-            text-align: center;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        input[type="number"]:focus {
-            border-color: var(--accent-color);
-        }
-
-        /* أزرار التشغيل والربط */
+        /* زر البدء الضخم */
         .action-btn {
-            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-            color: black;
-            font-weight: bold;
-            font-size: 1.1rem;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+            background: linear-gradient(135deg, #0052b3, var(--neon-blue));
+            color: white; border: none; padding: 16px; width: 100%; border-radius: 8px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,122,255,0.25); transition: 0.2s;
         }
+        .action-btn:active { transform: scale(0.98); opacity: 0.9; }
 
-        .action-btn:hover {
-            transform: scale(0.98);
-            opacity: 0.9;
+        /* تأثيرات محاكاة الاختراق العائمة (Overlay) */
+        .overlay-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 5, 8, 0.96); z-index: 9999; max-width: 480px; left: 50%; transform: translateX(-50%);
+            padding: 25px 15px; direction: ltr; text-align: left; box-sizing: border-box;
         }
-
-        /* العداد التفاعلي للفحص */
-        .status-loader {
-            display: none;
-            margin-top: 15px;
-            background: #07080e;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-        }
-
-        .progress-bar {
-            width: 100%;
-            background: #1e293b;
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-color);
-            width: 0%;
-        }
-
-        /* الفوتر لحفظ الحقوق */
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            border-top: 1px solid #2c3148;
-            padding-top: 12px;
-        }
+        .matrix-text { font-family: monospace; font-size: 0.75rem; color: var(--neon-green); height: 80%; overflow-y: hidden; margin-bottom: 20px; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-    <div class="wrapper">
-        <div class="header">
-            <h1>لوحة تفعيل ميزات VIP</h1>
-            <p>تطوير وتعديل: المطور الخال قصي</p>
+    <div class="cyber-header">
+        <div class="header-title"><i class="fa-solid fa-shield-halved"></i> AETERNA INTERCEPTOR</div>
+        <div class="dev-badge"><i class="fa-solid fa-user-secret"></i> المطور الخال قصي VIP</div>
+    </div>
+
+    <div class="main-container">
+
+        <div class="terminal-box" id="terminalLogs">
+            <div class="log-line log-info">[SYSTEM] Initializing cloud matrix tunnel...</div>
+            <div class="log-line log-success">[AUTH] Handshake verified with secure node.</div>
+            <div class="log-line log-warn">[HASH] DB signature active on layer 7.</div>
         </div>
 
-        <div class="game-screen">
-            <div class="multiplier-text" id="liveMultiplier">1.00x</div>
-            
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 10px;">سجل آخر الجولات المستقرة</div>
-            <div class="history-container" id="historyBox">
-                <div class="history-badge">2.34x</div>
+        <div class="decrypt-panel">
+            <div class="panel-tag">LIVE SIGNATURE REALTIME</div>
+
+            <div class="live-status-container">
+                <div>
+                    <div style="font-size: 0.65rem; color: var(--text-dim); font-weight: bold; margin-bottom: 2px; text-align: right;">ROUND DATA STREAM</div>
+                    <div style="font-size: 0.8rem; color: var(--neon-green); font-weight: bold; display: flex; align-items: center; gap: 5px;" id="statusText">
+                        <i class="fa-solid fa-satellite-dish"></i> CONNECTED
+                    </div>
+                </div>
+                <div class="live-multiplier" id="crashCounter">1.00x</div>
+            </div>
+
+            <div class="history-grid" id="historyGrid">
+                <div class="history-badge">4.12x</div>
+                <div class="history-badge">3.80x</div>
+                <div class="history-badge">3.44x</div>
+                <div class="history-badge">3.76x</div>
                 <div class="history-badge">1.82x</div>
-                <div class="history-badge">5.12x</div>
+                <div class="history-badge">2.34x</div>
             </div>
-        </div>
 
-        <div class="step-box">
-            <div class="step-title"><i class="fa-solid fa-key"></i> جاهزية النظام والبروموكود التفاعلي</div>
-            <div class="promo-display">KAJ0117</div>
-        </div>
-
-        <div class="step-box">
-            <div class="step-title"><i class="fa-solid fa-user-shield"></i> تحديد الهوية والربط الرقمي</div>
-            <input type="number" id="userId" placeholder="أدخل معرف الحساب (ID) المكون من 9 أرقام">
-        </div>
-
-        <button class="action-btn" id="submitBtn" onclick="runScriptConnection()">بدء فحص الاتصال ومزامنة المعرف</button>
-
-        <div class="status-loader" id="statusPanel">
-            <div id="statusMessage" style="color: var(--accent-color);">جاري الاتصال بقاعدة الحزم البرمجية...</div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="barFill"></div>
+            <div class="input-group">
+                <span class="input-label"><i class="fa-solid fa-key"></i> نظام التحقق من البروموكود التفاعلي</span>
+                <div class="promo-display">
+                    <span>KAJ0117</span>
+                    <i class="fa-regular fa-copy" style="cursor: pointer; font-size: 1.1rem;" onclick="navigator.clipboard.writeText('KAJ0117'); alert('تم نسخ رمز التحقق المعتمد KAJ0117')"></i>
+                </div>
             </div>
+
+            <div class="input-group">
+                <span class="input-label"><i class="fa-solid fa-fingerprint"></i> معرف الحساب المستهدف (ID المكون من 9 أرقام)</span>
+                <input type="number" class="cyber-input" id="accountIdInput" placeholder="000000000">
+            </div>
+
+            <button class="action-btn" onclick="triggerCyberCrack()">
+                <i class="fa-solid fa-terminal" style="margin-left: 8px;"></i> INITIALIZE LIVE SOCKET LINK & DATA STREAM
+            </button>
         </div>
 
-        <div class="footer">
-            <p>جميع الحقوق محفوظة © الخال قصي | برمجيات الويب المتطورة</p>
+    </div>
+
+    <div class="overlay-screen" id="overlayCrack">
+        <div class="matrix-text" id="matrixConsole"></div>
+        <div style="text-align: center;">
+            <span style="color: var(--text-gold); font-weight: bold; font-size: 0.9rem; display: block; margin-bottom: 15px;" id="loadingText">جاري فحص وتخطي طبقات الحماية وتأكيد المزامنة...</span>
         </div>
     </div>
 
     <script>
-        // دالة تشغيل عداد الطائرة التلقائي فور فتح الصفحة ليحاكي الأجواء
-        function runAutoMultiplier() {
-            let display = document.getElementById('liveMultiplier');
-            let current = 1.00;
-            // توليد رقم عشوائي واقعي يتوقف عنده العداد تلقائياً
-            let target = (Math.random() * (4.50 - 1.10) + 1.10).toFixed(2);
-            
-            display.classList.remove('crash');
-            
-            let gameLoop = setInterval(() => {
-                if (current >= target) {
-                    clearInterval(gameLoop);
-                    display.innerText = "Flew Away! " + current.toFixed(2) + "x";
-                    display.classList.add('crash');
-                    
-                    // تحديث سجل الجولات السابقة بالرقم الجديد لتبدو الواجهة حية
-                    updateHistory(current.toFixed(2) + "x");
-                    
-                    // إعادة تشغيل جولة جديدة تلقائياً بعد 3 ثوانٍ من الانفجار
-                    setTimeout(runAutoMultiplier, 3000);
-                } else {
-                    current += 0.04;
-                    display.innerText = current.toFixed(2) + "x";
-                }
-            }, 50);
-        }
-
-        // دالة إضافة النتيجة الجديدة في السجل الحركي
-        function updateHistory(newRecord) {
-            let box = document.getElementById('historyBox');
-            let badge = document.createElement('div');
-            badge.className = 'history-badge';
-            badge.innerText = newRecord;
-            box.insertBefore(badge, box.firstChild);
-            if(box.children.length > 5) {
-                box.removeChild(box.lastChild);
+        // محاكاة حية وتلقائية لشاشة الـ Terminal بالخلفية لتبدو حقيقية جداً
+        const logsContainer = document.getElementById('terminalLogs');
+        const simulatedLogs = [
+            { text: "[INFO] Fetching current session state tokens...", type: "log-info" },
+            { text: "[OK] Packets aligned on port 8443 successfully.", type: "log-success" },
+            { text: "[WARN] Jitter detected: 12ms. Realignment initialized.", type: "log-warn" },
+            { text: "[SYNC] Memory offset injected at 0x7FFA83BC.", type: "log-info" },
+            { text: "[OK] Node handshake updated dynamically.", type: "log-success" }
+        ];
+        
+        setInterval(() => {
+            let randomLog = simulatedLogs[Math.floor(Math.random() * simulatedLogs.length)];
+            let newLine = document.createElement('div');
+            newLine.className = `log-line ${randomLog.type}`;
+            newLine.innerText = randomLog.text;
+            logsContainer.appendChild(newLine);
+            if (logsContainer.children.length > 5) {
+                logsContainer.removeChild(logsContainer.children[0]);
             }
+        }, 3500);
+
+        // محاكاة عداد الطيارة المزامَن الحركي التلقائي
+        const crashCounter = document.getElementById('crashCounter');
+        const statusText = document.getElementById('statusText');
+        const historyGrid = document.getElementById('historyGrid');
+
+        function runLiveCrashEngine() {
+            let current = 1.00;
+            let limit = (Math.random() * (4.80 - 1.15) + 1.15).toFixed(2);
+            crashCounter.classList.remove('flew');
+            statusText.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> CONNECTED';
+            statusText.style.color = "var(--neon-green)";
+
+            let interval = setInterval(() => {
+                if (current >= limit) {
+                    clearInterval(interval);
+                    crashCounter.innerText = "FLEW AWAY! " + current.toFixed(2) + "x";
+                    crashCounter.classList.add('flew');
+                    statusText.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> DISCONNECTED';
+                    statusText.style.color = "var(--neon-red)";
+                    
+                    // إضافة الجولة الفائتة للسجل تلقائياً
+                    let newBadge = document.createElement('div');
+                    newBadge.className = 'history-badge';
+                    newBadge.innerText = current.toFixed(2) + "x";
+                    historyGrid.insertBefore(newBadge, historyGrid.firstChild);
+                    if(historyGrid.children.length > 6) historyGrid.removeChild(historyGrid.lastChild);
+
+                    setTimeout(runLiveCrashEngine, 3000);
+                } else {
+                    current += 0.05;
+                    crashCounter.innerText = current.toFixed(2) + "x";
+                }
+            }, 65);
         }
+        runLiveCrashEngine();
 
-        // تشغيل العداد تلقائياً عند تحميل الصفحة
-        runAutoMultiplier();
-
-        // دالة ربط وفحص المعرف (ID) التفاعلية عند ضغط المستخدم على الزر
-        function runScriptConnection() {
-            let id = document.getElementById('userId').value;
-            let btn = document.getElementById('submitBtn');
-            let panel = document.getElementById('statusPanel');
-            let fill = document.getElementById('barFill');
-            let msg = document.getElementById('statusMessage');
-
-            if(id.trim().length < 9) {
-                alert("يرجى إدخال معرف (ID) صحيح ومكون من 9 أرقام للتحقق من الاتصال!");
+        // محاكاة واجهة الاختراق الكبرى (كسر كلمات السر وتخطي الجدران النارية واهمياً)
+        function triggerCyberCrack() {
+            let idVal = document.getElementById('accountIdInput').value;
+            if(idVal.trim().length < 8) {
+                alert("الرجاء إدخال معرف ID صالح (مكون من 8 إلى 12 رقم) لبدء بناء النفق السحابي!");
                 return;
             }
 
-            btn.disabled = true;
-            panel.style.display = 'block';
-            let width = 0;
+            const overlay = document.getElementById('overlayCrack');
+            const consoleBox = document.getElementById('matrixConsole');
+            const loadText = document.getElementById('loadingText');
+            
+            overlay.style.display = "block";
+            consoleBox.innerHTML = "";
+            loadText.innerText = "جاري تفعيل الاتصال عبر خادم المطور الخال قصي VIP...";
 
-            let process = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(process);
-                    msg.innerText = "تم التحقق ومزامنة الحساب بنجاح تحت إشراف المطور الخال قصي! 🟢";
-                    msg.style.color = "#10b981";
-                    btn.disabled = false;
+            let steps = [
+                `INITIALIZING BRUTE-FORCE DECRYPT ENGINE ON ID: ${idVal}...`,
+                "CONNECTING TO INSTANCE SATELLITE: BURSA-TURKEY-NODE-1...",
+                "STATUS: 200 OK - TARGET SERVER ACKNOWLEDGED.",
+                "BYPASSING SECURE LAYER 4 FIREWALL ROUTE... [SUCCESS]",
+                "DECRYPTING SEED HASH: SHA-256 [7a8b9c2d1e0f394a5b6c]",
+                "EXTRACTING ACTIVE MEMORY BUFFER BLOCKS...",
+                "INJECTING PACKETS INTO MAIN LOOP BUFFER... DONE.",
+                "STABILIZING WIRELESS CLOUD EMULATOR FOR PHONES...",
+                "VERIFYING LICENSE AND VIP ACCESS GRANTED BY 'AL-KHAL QUSAI'...",
+                "CONNECTION SYNCED 100% // REDIRECTING STREAM TO MAIN DASHBOARD."
+            ];
+
+            let index = 0;
+            let textTimer = setInterval(() => {
+                if (index < steps.length) {
+                    consoleBox.innerHTML += `<div><span style="color:#00e676;">[~]</span> ${steps[index]}</div>`;
+                    index++;
                 } else {
-                    width++;
-                    fill.style.width = width + '%';
-                    if(width == 25) msg.innerText = "جاري قراءة ملفات الحساب لـ المعرف: " + id;
-                    if(width == 60) msg.innerText = "جاري التأكد من مطابقة كود النظام التفعيلي التلقائي...";
-                    if(width == 85) msg.innerText = "جاري حقن الحزم النظيفة وتأمين قناة البيانات الفورية...";
+                    clearInterval(textTimer);
+                    loadText.innerHTML = "<span style='color:#00e676;'>✓ تم تأكيد الربط الرقمي المتقدم بنجاح!</span>";
+                    setTimeout(() => {
+                        overlay.style.display = "none";
+                        alert("تمت المزامنة وحقن الحزم بنجاح في الواجهة السحابية التفاعلية.");
+                    }, 1500);
                 }
-            }, 45);
+            }, 450);
         }
     </script>
 </body>
 </html>
+
